@@ -66,10 +66,12 @@ async def doubao_cache_complete(
     messages.extend(history_messages)
     messages.append({"role": "user", "content": prompt})
 
+    # thinking 参数仅用于 chat.completions，不传入 context.completions（context API 可能不支持）
+    thinking_kwargs = {}
     if thinking_enable:
-        kwargs["thinking"] = {"type": "enabled"}
+        thinking_kwargs["thinking"] = {"type": "enabled"}
     else:
-        kwargs["thinking"] = {"type": "disabled"}
+        thinking_kwargs["thinking"] = {"type": "disabled"}
 
     if sp_args.get("no_cache", None) or system_prompt is None:
 
@@ -77,7 +79,7 @@ async def doubao_cache_complete(
             messages.insert(0, {"role": "system", "content": system_prompt})
 
         response = await doubao_async_client.chat.completions.create(
-            model=model, messages=messages, timeout=120, **kwargs
+            model=model, messages=messages, timeout=120, **kwargs, **thinking_kwargs
         )
         LOG.info(f"No Cached {prompt_id} {model} {response.usage.prompt_tokens}")
         return response.choices[0].message.content
@@ -92,10 +94,11 @@ async def doubao_cache_complete(
 
     if context_id is None:
         response = await doubao_async_client.chat.completions.create(
-            model=model, messages=messages, timeout=120, **kwargs
+            model=model, messages=messages, timeout=120, **kwargs, **thinking_kwargs
         )
         return response.choices[0].message.content
     else:
+        # context.completions 不传 thinking 参数，避免 API 不兼容
         response = await doubao_async_client.context.completions.create(
             model=model, messages=messages, context_id=context_id, timeout=120, **kwargs
         )
