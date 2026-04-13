@@ -54,7 +54,7 @@ async def doubao_cache_complete(
     prompt,
     system_prompt=None,
     history_messages=[],
-    thinking_enable=False,
+    thinking_enable=None,
     **kwargs,
 ) -> str:
     sp_args, kwargs = exclude_special_kwargs(kwargs)
