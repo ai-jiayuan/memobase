@@ -67,10 +67,11 @@ async def doubao_cache_complete(
     messages.append({"role": "user", "content": prompt})
 
     # thinking 参数仅用于 chat.completions，不传入 context.completions（context API 可能不支持）
+    # thinking_enable=None 时不干预，让 API 使用默认行为
     thinking_kwargs = {}
-    if thinking_enable:
+    if thinking_enable is True:
         thinking_kwargs["thinking"] = {"type": "enabled"}
-    else:
+    elif thinking_enable is False:
         thinking_kwargs["thinking"] = {"type": "disabled"}
 
     if sp_args.get("no_cache", None) or system_prompt is None:
