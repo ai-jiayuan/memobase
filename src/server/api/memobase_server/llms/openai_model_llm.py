@@ -3,7 +3,7 @@ from ..env import LOG
 
 
 async def openai_complete(
-    model, prompt, system_prompt=None, history_messages=[], **kwargs
+    model, prompt, system_prompt=None, history_messages=[], thinking_enable=False, **kwargs
 ) -> str:
     sp_args, kwargs = exclude_special_kwargs(kwargs)
     prompt_id = sp_args.get("prompt_id", None)
