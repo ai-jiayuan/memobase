@@ -15,6 +15,12 @@ async def openai_complete(
     messages.extend(history_messages)
     messages.append({"role": "user", "content": prompt})
 
+    # 关闭 thinking：DashScope/Qwen3 使用 extra_body={"enable_thinking": False}
+    if not thinking_enable:
+        extra_body = kwargs.pop("extra_body", {}) or {}
+        extra_body["enable_thinking"] = False
+        kwargs["extra_body"] = extra_body
+
     response = await openai_async_client.chat.completions.create(
         model=model, messages=messages, timeout=120, **kwargs
     )
