@@ -321,4 +321,4 @@ dist
 
 # act
 .actrc
-event.json
+event.json.idea/
